@@ -119,7 +119,7 @@ export default function defineVersionedConfig(
       logger.info(
           "[vitepress-plugin-versioning] Versioned sidebar preperation failed, disabling versioning."
       );
-      return configBackup; // TODO: This entirely disables versioning, is this intentional?
+      return configBackup as any; // TODO: This entirely disables versioning, is this intentional?
     } else {
       themeConfig.sidebar = {
         ...themeConfig.sidebar,
@@ -190,5 +190,5 @@ export default function defineVersionedConfig(
   }
 
 
-  return config;
+  return config as any;
 }
