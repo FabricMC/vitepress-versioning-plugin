@@ -1,5 +1,3 @@
-import clc from "cli-color";
-import _ from "lodash";
 import fs from "node:fs";
 import path from "node:path";
 import { createLogger } from "vite";
@@ -16,6 +14,24 @@ import { defaultConfig, defaultThemeConfig } from "./defaults";
 // TODO: Change URL format to `/version/lang/file`
 
 export { Versioned };
+
+const _ = {
+  defaultsDeep: (t: any, d: any) => {
+    if (!t || typeof t !== typeof d) return t;
+    for (const k in d) {
+      if (typeof t[k] === "object" && typeof d[k] === "object") {
+        _.defaultsDeep(t[k], d[k]);
+      } else if (t[k] === void 0) {
+        if (typeof d[k] === "object") {
+          t[k] = _.defaultsDeep({}, d[k]);
+        } else {
+          t[k] = d[k];
+        }
+      }
+    }
+    return t;
+  }
+};
 
 /**
  * Processes the default theme config with versioning config.
@@ -100,12 +116,10 @@ export default function defineVersionedConfig(
     // Generate the sidebars
     if (Array.isArray(themeConfig.sidebar)) {
       logger.error(
-        clc.red(`[vitepress-plugin-versioning]`) +
-          " The sidebar cannot be an array. Please use a DefaultTheme.MultiSidebar object where the root ('/') is your array."
+          "[vitepress-plugin-versioning] The sidebar cannot be an array. Please use a DefaultTheme.MultiSidebar object where the root ('/') is your array."
       );
       logger.info(
-        clc.yellow(`[vitepress-plugin-versioning]`) +
-          " Versioned sidebar preperation failed, disabling versioning."
+          "[vitepress-plugin-versioning] Versioned sidebar preperation failed, disabling versioning."
       );
       return configBackup; // TODO: This entirely disables versioning, is this intentional?
     } else {

@@ -1,4 +1,3 @@
-import JSON5 from "json5";
 import fs from "node:fs";
 import path from "node:path";
 import { DefaultTheme } from "vitepress";
@@ -55,7 +54,7 @@ function getSidebar(
   );
 
   if (fs.existsSync(sidebarPath)) {
-    const sidebar = JSON5.parse(fs.readFileSync(sidebarPath, "utf-8"));
+    const sidebar = JSON.parse(fs.readFileSync(sidebarPath, "utf-8"));
 
     if (Array.isArray(sidebar)) {
       // Replace all links in the sidebar with their versioned equivalents.
