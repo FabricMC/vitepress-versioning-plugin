@@ -15,22 +15,20 @@ import { defaultConfig, defaultThemeConfig } from "./defaults";
 
 export { Versioned };
 
-const _ = {
-  defaultsDeep: (t: any, d: any) => {
-    if (!t || typeof t !== typeof d) return t;
-    for (const k in d) {
-      if (typeof t[k] === "object" && typeof d[k] === "object") {
-        _.defaultsDeep(t[k], d[k]);
-      } else if (t[k] === void 0) {
-        if (typeof d[k] === "object") {
-          t[k] = _.defaultsDeep({}, d[k]);
-        } else {
-          t[k] = d[k];
-        }
+const defaultsDeep = (t: any, d: any) => {
+  if (!t || typeof t !== typeof d) return t;
+  for (const k in d) {
+    if (typeof t[k] === "object" && typeof d[k] === "object") {
+      defaultsDeep(t[k], d[k]);
+    } else if (t[k] === void 0) {
+      if (typeof d[k] === "object") {
+        t[k] = defaultsDeep({}, d[k]);
+      } else {
+        t[k] = d[k];
       }
     }
-    return t;
   }
+  return t;
 };
 
 /**
@@ -47,7 +45,7 @@ export default function defineVersionedConfig(
 
   // TODO: Does this convert to UserConfig correctly?
   const configBackup = { ...config };
-  config = _.defaultsDeep(config, defaultConfig);
+  config = defaultsDeep(config, defaultConfig);
 
   // Load all the versions from the "versions" folder.
   const versions: Versioned.Version[] = [];
@@ -70,7 +68,7 @@ export default function defineVersionedConfig(
   ]) {
     if (!themeConfig) continue;
 
-    themeConfig = _.defaultsDeep(
+    themeConfig = defaultsDeep(
       themeConfig,
       defaultThemeConfig
     ) as Versioned.ThemeConfig;
