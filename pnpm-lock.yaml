@@ -8,8 +8,11 @@ importers:
 
   .:
     dependencies:
+      vite:
+        specifier: ^7.1.2
+        version: 7.3.3(@types/node@20.19.40)
       vitepress:
-        specifier: 2.0.0-alpha.12
+        specifier: ^2.0.0-alpha.12
         version: 2.0.0-alpha.12(@types/node@20.19.40)(postcss@8.5.14)(typescript@5.9.3)
     devDependencies:
       '@types/node':
