@@ -15,7 +15,7 @@ const defaultConfig: Versioned.Config = {
       sidebarPathResolver: (version: Versioned.Version) =>
         `.vitepress/sidebars/versioned/${version}.json`,
       sidebarUrlProcessor: (url: string, version: Versioned.Version) =>
-        `/${version}${url}`,
+        url.startsWith("/") ? `/${version}${url}` : url,
     },
     // navbars: {
     //   processNavbarURLs: true,

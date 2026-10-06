@@ -111,7 +111,6 @@ export default function defineVersionedConfig(
       });
     }
 
-    // Generate the sidebars
     if (Array.isArray(themeConfig.sidebar)) {
       logger.error(
           "[vitepress-plugin-versioning] The sidebar cannot be an array. Please use a DefaultTheme.MultiSidebar object where the root ('/') is your array."
@@ -120,17 +119,28 @@ export default function defineVersionedConfig(
           "[vitepress-plugin-versioning] Versioned sidebar preperation failed, disabling versioning."
       );
       return configBackup as any; // TODO: This entirely disables versioning, is this intentional?
-    } else {
-      themeConfig.sidebar = {
-        ...themeConfig.sidebar,
-        ...generateVersionSidebars(
-          config.versioning.sidebars!,
-          dirname,
-          versions,
-          Object.keys(config.locales ?? {})
-        ),
-      };
     }
+  }
+
+  const sidebarTargets = Object.keys(config.locales ?? {}).map(
+    (locale) =>
+      [locale, (config.locales![locale].themeConfig ??= {}) as Versioned.ThemeConfig] as const,
+  );
+
+  if (sidebarTargets.length === 0) {
+    sidebarTargets.push(["root", (config.themeConfig ??= {}) as Versioned.ThemeConfig])
+  }
+
+  for (const [locale, themeConfig] of sidebarTargets) {
+    themeConfig.sidebar = {
+      ...themeConfig.sidebar,
+      ...generateVersionSidebars(
+        config.versioning.sidebars!,
+        dirname,
+        versions,
+        locale
+      ),
+    };
   }
 
   // Generate the rewrites
@@ -147,12 +157,10 @@ export default function defineVersionedConfig(
   try {
     if(config.versioning.sidebars) {
       if(config.versioning.sidebars.sidebarContentProcessor) {
-        // For all sidebars, in locales and main themeConfig
-        for (const locale of Object.keys(config.locales ?? {})) {
-          if(config.locales?.[locale]?.themeConfig) {
-            // @ts-ignore
-            config.locales[locale].themeConfig.sidebar = config.versioning.sidebars.sidebarContentProcessor!(config.locales[locale].themeConfig.sidebar as DefaultTheme.SidebarMulti);
-          } 
+        for (const [, themeConfig] of sidebarTargets) {
+          if(themeConfig?.sidebar) {
+            themeConfig.sidebar = config.versioning.sidebars.sidebarContentProcessor(themeConfig.sidebar);
+          }
         }
       }
     }

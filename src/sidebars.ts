@@ -3,6 +3,10 @@ import path from "node:path";
 import { DefaultTheme } from "vitepress";
 import { Versioned } from "./types";
 
+function removeLocale(url: string, locale: string): string {
+  return locale !== "root" && url.startsWith(`/${locale}/`) ? url.slice(locale.length + 1) : url;
+}
+
 /**
  * Replaces all links in the sidebar with their versioned equivalents.
  * @example `{link: '/test'}` becomes `{link: '/0.1.0/test'}`
@@ -13,7 +17,8 @@ import { Versioned } from "./types";
 function replaceLinksRecursive(
   sidebar: Versioned.SidebarItem[],
   config: Versioned.SidebarConfig,
-  version: Versioned.Version
+  version: Versioned.Version,
+  locale: string,
 ): DefaultTheme.SidebarItem[] {
   // Prepend the version to all links. `{VERSION}/$link`
   return sidebar.map((item) => {
@@ -22,11 +27,11 @@ function replaceLinksRecursive(
     }
 
     if (item.link) {
-      item.link = config.sidebarUrlProcessor!(item.link, version);
+      item.link = config.sidebarUrlProcessor!(removeLocale(item.link, locale), version);
     }
 
     if (item.items) {
-      item.items = replaceLinksRecursive(item.items, config, version);
+      item.items = replaceLinksRecursive(item.items, config, version, locale);
     }
 
     return item;
@@ -61,7 +66,8 @@ function getSidebar(
       return replaceLinksRecursive(
         sidebar as Versioned.SidebarItem[],
         config,
-        (locale === "root" ? "" : `${locale}/`) + version
+        (locale === "root" ? "" : `${locale}/`) + version,
+        locale
       );
     } else {
       // Must be a multisidebar instance.
@@ -72,7 +78,8 @@ function getSidebar(
         multiSidebar[key] = replaceLinksRecursive(
           multiSidebar[key] as Versioned.SidebarItem[],
           config,
-          (locale === "root" ? "" : `${locale}/`) + version
+          (locale === "root" ? "" : `${locale}/`) + version,
+          locale
         );
       });
 
@@ -91,26 +98,22 @@ export function generateVersionSidebars(
   config: Versioned.SidebarConfig | false,
   dirname: string,
   versions: Versioned.Version[],
-  locales: string[]
+  locale: string
 ): DefaultTheme.SidebarMulti {
   const versionSidebars: DefaultTheme.SidebarMulti = {};
   if (config === false) return versionSidebars;
 
   for (const version of versions) {
-    for (const locale of locales) {
-      const sidebar = getSidebar(config, dirname, version, locale);
+    const sidebar = getSidebar(config, dirname, version, locale);
 
-      if (Array.isArray(sidebar)) {
+    if (Array.isArray(sidebar)) {
+      versionSidebars[(locale === "root" ? "" : `/${locale}`) + `/${version}/`] = sidebar;
+    } else {
+      Object.keys(sidebar).forEach((key) => {
         versionSidebars[
-          (locale === "root" ? "" : `/${locale}`) + `/${version}/`
-        ] = sidebar;
-      } else {
-        Object.keys(sidebar).forEach((key) => {
-          versionSidebars[
-            (locale === "root" ? "" : `/${locale}`) + `/${version}${key}`
-          ] = (sidebar as DefaultTheme.SidebarMulti)[key];
-        });
-      }
+          (locale === "root" ? "" : `/${locale}`) + `/${version}${removeLocale(key, locale)}`
+        ] = (sidebar as DefaultTheme.SidebarMulti)[key];
+      });
     }
   }
 
