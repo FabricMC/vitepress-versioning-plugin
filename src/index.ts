@@ -1,6 +1,5 @@
 import fs from "node:fs";
 import path from "node:path";
-import { createLogger } from "vite";
 import { DefaultTheme, UserConfig } from "vitepress";
 import { generateVersionRewrites } from "./rewrites";
 import { generateVersionSidebars } from "./sidebars";
@@ -41,8 +40,6 @@ export default function defineVersionedConfig(
   config: Versioned.Config,
   dirname: string
 ): UserConfig<DefaultTheme.Config> {
-  const logger = createLogger();
-
   // TODO: Does this convert to UserConfig correctly?
   const configBackup = { ...config };
   config = defaultsDeep(config, defaultConfig);
@@ -112,10 +109,10 @@ export default function defineVersionedConfig(
     }
 
     if (Array.isArray(themeConfig.sidebar)) {
-      logger.error(
+      console.error(
           "[vitepress-plugin-versioning] The sidebar cannot be an array. Please use a DefaultTheme.MultiSidebar object where the root ('/') is your array."
       );
-      logger.info(
+      console.info(
           "[vitepress-plugin-versioning] Versioned sidebar preperation failed, disabling versioning."
       );
       return configBackup as any; // TODO: This entirely disables versioning, is this intentional?
@@ -165,9 +162,9 @@ export default function defineVersionedConfig(
       }
     }
   } catch (e) {
-    logger.error("Something went wrong when processing the sidebar content.")
-    logger.error(e as any);
-    logger.info("Reverting to pre-processed sidebar configs.");
+    console.error("Something went wrong when processing the sidebar content.")
+    console.error(e as any);
+    console.info("Reverting to pre-processed sidebar configs.");
   }
 
   // For all components within themeConfig.nav and locale.themeConfig.nav, insert version information into the props.
