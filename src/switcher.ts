@@ -1,5 +1,5 @@
 import { DefaultTheme } from "vitepress";
-import { Versioned } from "./types";
+import type { Versioned } from "./types.ts";
 
 /**
  * Generates a nav item for the version switcher, which contains all versions in the "versions" folder and the latest version.

@@ -1,11 +1,11 @@
 import fs from "node:fs";
 import path from "node:path";
 import { DefaultTheme, UserConfig } from "vitepress";
-import { generateVersionRewrites } from "./rewrites";
-import { generateVersionSidebars } from "./sidebars";
-import { generateVersionSwitcher } from "./switcher";
-import { Versioned } from "./types";
-import { defaultConfig, defaultThemeConfig } from "./defaults";
+import { generateVersionRewrites } from "./rewrites.ts";
+import { generateVersionSidebars } from "./sidebars.ts";
+import { generateVersionSwitcher } from "./switcher.ts";
+import type { Versioned } from "./types.ts";
+import { defaultConfig, defaultThemeConfig } from "./defaults.ts";
 // import { generateVersionedNavbars } from "./navbars";
 
 // TODO: Fix nav bar elements (not versioned) - Seems not to be possible due to VitePress limitation...

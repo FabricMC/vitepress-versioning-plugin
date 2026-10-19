@@ -1,6 +1,6 @@
 import fs from "node:fs";
 import path from "node:path";
-import { Versioned } from "./types";
+import type { Versioned } from "./types.ts";
 
 function getFilesRecursively(dirname: string, locales: string[]): string[] {
   let files: string[] = [];

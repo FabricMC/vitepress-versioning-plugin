@@ -1,7 +1,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import { DefaultTheme } from "vitepress";
-import { Versioned } from "./types";
+import type { Versioned } from "./types.ts";
 
 function removeLocale(url: string, locale: string): string {
   return locale !== "root" && url.startsWith(`/${locale}/`) ? url.slice(locale.length + 1) : url;

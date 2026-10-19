@@ -1,17 +1,16 @@
 {
   "name": "vitepress-versioning-plugin",
-  "version": "1.5.0",
+  "version": "1.6.0",
   "private": true,
   "description": "A highly customizable versioning plugin for VitePress v1",
-  "main": "./dist/index.js",
-  "types": "./dist/index.d.ts",
+  "main": "./dist/index.mjs",
+  "types": "./dist/index.d.mts",
   "exports": {
     ".": {
-      "types": "./dist/index.d.ts",
-      "default": "./dist/index.js"
+      "types": "./dist/index.d.mts",
+      "default": "./dist/index.mjs"
     },
-    "./src/components/*": "./src/components/*",
-    "./package.json": "./package.json"
+    "./src/components/*": "./src/components/*"
   },
   "files": [
     "dist",
@@ -19,8 +18,8 @@
   ],
   "type": "module",
   "scripts": {
-    "prepublish": "tsup",
-    "build": "tsup",
+    "prepublish": "tsdown",
+    "build": "tsdown",
     "docs": "vitepress dev docs",
     "docs:build": "vitepress build docs"
   },
@@ -38,15 +37,26 @@
   "author": "Calum H. (imb11)",
   "license": "MIT",
   "devDependencies": {
-    "@types/node": "^20.19.40",
-    "@vueuse/core": "^10.11.1",
-    "tsup": "^8.5.1",
-    "typescript": "^5.9.3",
-    "vue": "^3.5.34"
+    "@types/node": "^26.6.5",
+    "@vueuse/core": "^14.4.0",
+    "tsdown": "^0.23.1",
+    "typescript": "^6.0.3",
+    "vue": "^3.5.44"
   },
   "peerDependencies": {
-    "vite": "^7.1.2",
-    "vitepress": "^2.0.0-alpha.12"
+    "vite": "^8.2.1",
+    "vitepress": "^2.0.0-alpha.20"
   },
-  "packageManager": "pnpm@11.0.9"
+  "devEngines": {
+    "packageManager": {
+      "name": "pnpm",
+      "version": "12.14.0",
+      "onFail": "download"
+    },
+    "runtime": {
+      "name": "node",
+      "version": "22.20.0",
+      "onFail": "warn"
+    }
+  }
 }

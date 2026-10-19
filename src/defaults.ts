@@ -1,4 +1,4 @@
-import { Versioned } from "./types";
+import type { Versioned } from "./types.ts";
 
 const defaultThemeConfig: Versioned.ThemeConfig = {
   versionSwitcher: {
